@@ -27,6 +27,8 @@ Use the following instructions to deploy the sample application.
 - [The AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) v1.17 or newer.
 
 If you use the AWS CLI v2, add the following to your [configuration file](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) (`~/.aws/config`):
+- [HAPI FL7v2](https://hapifhir.github.io/hapi-hl7v2/getting_started.html)
+
 
 ```
 cli_binary_format=raw-in-base64-out
