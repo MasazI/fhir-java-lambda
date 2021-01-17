@@ -45,7 +45,7 @@ This setting enables the AWS CLI v2 to load JSON events from a file, matching th
 Download or clone this repository and setup environment.
 
     $ git clone https://github.com/MasazI/fhir-java-lambda.git
-    $ ./setup.sh
+    $ ./0-setup-cloud9.sh
     $ export PATH=$PATH:/opt/gradle/gradle-6.7/bin
     $ export AWS_DEFAULT_REGION=<your region>
 
@@ -75,7 +75,7 @@ You can also build the application with Maven. To use maven, add `mvn` to the co
     java-basic$ ./3-deploy.sh mvn
     [INFO] Scanning for projects...
     [INFO] -----------------------< com.example:blank-java >-----------------------
-    [INFO] Building blank-java-function 1.0-SNAPSHOT
+    [INFO] Building fhir-java-lambda-function 1.0-SNAPSHOT
     [INFO] --------------------------------[ jar ]---------------------------------
     ...
 
