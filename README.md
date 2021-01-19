@@ -60,6 +60,15 @@ To build a Lambda layer that contains the function's runtime dependencies, run `
 
 # Deploy
 
+Set environment variable below,\
+
+    export ENV_USERNAME='<username>'
+    export ENV_PASSWORD='<password>'
+    export ENV_ACCESS_KEY='<aws access key>'
+    export ENV_SECRET_KEY='<aws secret key>'
+    export ENV_USER_POOL='<cognito user pool id>'
+    export ENV_CLIENT_ID='<cognito client id>'
+
 To deploy the application, run `3-deploy.sh`.
 
     fhir-java-lambda$ ./3-deploy.sh
@@ -79,6 +88,15 @@ You can also build the application with Maven. To use maven, add `mvn` to the co
     [INFO] --------------------------------[ jar ]---------------------------------
     ...
 
+After deployment, set the same environment variables into Lambda.
+
+    ENV_USERNAME='<username>'
+    ENV_PASSWORD='<password>'
+    ENV_ACCESS_KEY='<aws access key>'
+    ENV_SECRET_KEY='<aws secret key>'
+    ENV_USER_POOL='<cognito user pool id>'
+    ENV_CLIENT_ID='<cognito client id>'
+    
 # Test
 To invoke the function, run `4-upload.sh`.
 

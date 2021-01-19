@@ -28,6 +28,10 @@ import java.util.concurrent.CompletableFuture;
 //TODO implementation for s3 event
 public class HandlerS3 implements RequestHandler<S3Event, String> {
   Gson gson = new GsonBuilder().setPrettyPrinting().create();
+  
+  //TODO put it into API Gateway (rest)
+  CognitoAuth auth = new CognitoAuth();
+  
   private static final Logger logger = LoggerFactory.getLogger(HandlerS3.class);
   @Override
   public String handleRequest(S3Event s3event, Context context) {
@@ -41,9 +45,7 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     logger.info("Source key: " + srcKey);
     
     //TODO get object and transform to new format
-    
-    
-    //TODO put it into API Gateway (rest)
+    auth.sightIn();
     
     
     //TODO put it into s3 destination

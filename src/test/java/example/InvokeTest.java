@@ -46,7 +46,7 @@ class InvokeTest {
   void invokeTest() throws IOException {
     AWSXRay.beginSegment("fhir-java-lambda-test");
     
-    Auth auth = new Auth();
+    CognitoAuth auth = new CognitoAuth();
     
     auth.sightIn();
     

@@ -35,6 +35,14 @@ Resources:
                 Rules:
                 - Name: prefix
                   Value: inbound/
+      Environment:
+        Variables:
+          ENV_USERNAME: ""
+          ENV_PASSWORD: ""
+          ENV_ACCESS_KEY: ""
+          ENV_SECRET_KEY: ""
+          ENV_USER_POOL: ""
+          ENV_CLIENT_ID: ""
   libs:
     Type: AWS::Serverless::LayerVersion
     Properties:
