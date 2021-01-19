@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 //TODO implementation for s3 event
 public class HandlerS3 implements RequestHandler<S3Event, String> {
   Gson gson = new GsonBuilder().setPrettyPrinting().create();
-  private static final Logger logger = LoggerFactory.getLogger(Handler.class);
+  private static final Logger logger = LoggerFactory.getLogger(HandlerS3.class);
   @Override
   public String handleRequest(S3Event s3event, Context context) {
     logger.info("EVENT: " + gson.toJson(s3event));
