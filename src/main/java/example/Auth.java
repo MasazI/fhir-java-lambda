@@ -13,4 +13,5 @@ import java.util.Map;
 public class Auth {
     public void sightIn() {
 
+    }
 }
