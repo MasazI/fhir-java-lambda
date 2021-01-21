@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 public class ApiGatewayClient {
     private static final Logger logger = LoggerFactory.getLogger(ApiGatewayClient.class);
     
-    private static String ENV_APIKEY = "ENV_APIKEY";
+    private static String ENV_API_KEY = "ENV_API_KEY";
     
     public HttpResponse<String> get(String endpoint, String token) throws Exception {
         try {
-            logger.info(System.getenv(ENV_APIKEY));
+            logger.info(System.getenv(ENV_API_KEY));
             
             HttpRequest req = HttpRequest.newBuilder(new URI(endpoint))
             .setHeader(
-                "x-api-key", System.getenv(ENV_APIKEY)
+                "x-api-key", System.getenv(ENV_API_KEY)
             // ).setHeader(
             //     "Content-Type", "application/json"
             // )

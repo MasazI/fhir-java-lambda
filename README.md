@@ -68,7 +68,7 @@ Set environment variable below,\
     export ENV_SECRET_KEY='<aws secret key>'
     export ENV_USER_POOL='<cognito user pool id>'
     export ENV_CLIENT_ID='<cognito client id>'
-    export ENV_APIKEY='<api gateway key>'
+    export ENV_API_KEY='<api gateway key>'
 
 
 To deploy the application, run `3-deploy.sh`.
@@ -98,7 +98,7 @@ After deployment, set the same environment variables into Lambda.
     ENV_SECRET_KEY='<aws secret key>'
     ENV_USER_POOL='<cognito user pool id>'
     ENV_CLIENT_ID='<cognito client id>'
-    ENV_APIKEY='<api gateway key>'
+    ENV_API_KEY='<api gateway key>'
     
 # Test
 To invoke the function, run `4-upload.sh`.
