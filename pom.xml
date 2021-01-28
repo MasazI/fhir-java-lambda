@@ -85,6 +85,24 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- This is the core HAPI library -->
+    <dependency>
+      <groupId>ca.uhn.hapi</groupId>
+      <artifactId>hapi-base</artifactId>
+      <version>2.2</version>
+    </dependency>       
+
+    <!-- These are structure JARs for HL7 v2.1 and 2.5.1 (as an example) -->
+    <dependency>
+      <groupId>ca.uhn.hapi</groupId>
+      <artifactId>hapi-structures-v21</artifactId>
+      <version>2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>ca.uhn.hapi</groupId>
+      <artifactId>hapi-structures-v251</artifactId>
+      <version>2.2</version>
+    </dependency>
   </dependencies>
 
   <build>

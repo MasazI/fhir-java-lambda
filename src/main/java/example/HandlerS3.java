@@ -17,6 +17,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+//import 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,9 @@ import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import example.pojo.patient.Patient;
+import example.pojo.observation.Observation;
 
 //TODO implementation for s3 event
 public class HandlerS3 implements RequestHandler<S3Event, String> {
@@ -45,8 +50,15 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     logger.info("Source key: " + srcKey);
     
     //TODO get object and transform to new format
+<<<<<<< HEAD
     auth.sightIn();
     
+=======
+    Patient pat = new Patient();
+    
+    //TODO put it into API Gateway (rest)
+    String fhirPatient = gson.toJson(pat);
+>>>>>>> issue2
     
     //TODO put it into s3 destination
     
