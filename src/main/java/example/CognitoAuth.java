@@ -16,6 +16,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 
 public class CognitoAuth {
     private static final Logger logger = LoggerFactory.getLogger(CognitoAuth.class);
@@ -27,7 +31,7 @@ public class CognitoAuth {
     private static String ENV_USER_POOL = "ENV_USER_POOL";
     private static String ENV_CLIENT_ID = "ENV_CLIENT_ID";
 
-    public void sightIn() {
+    public String sightIn() {
         logger.info(System.getenv(ENV_USERNAME));
         logger.info(System.getenv(ENV_PASSWORD));
         logger.info(System.getenv(ENV_ACCESS_KEY));
@@ -54,6 +58,12 @@ public class CognitoAuth {
             .withAuthParameters(authParameters);
         
         AdminInitiateAuthResult response = client.adminInitiateAuth(request);
-        System.out.println("Access Token: " + response.getAuthenticationResult().getAccessToken());
+        String accessToken = response.getAuthenticationResult().getAccessToken();
+        String idToken = response.getAuthenticationResult().getIdToken();
+        // System.out.println("Access Token: " + accessToken);
+        // System.out.println("Access IdToken: " + idToken);
+        // System.out.println("Access IdToken: " + response.getAuthenticationResult().getTokenType());
+
+        return accessToken;
     }
 }

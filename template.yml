@@ -43,6 +43,7 @@ Resources:
           ENV_SECRET_KEY: ""
           ENV_USER_POOL: ""
           ENV_CLIENT_ID: ""
+          ENV_API_KEY: ""
   libs:
     Type: AWS::Serverless::LayerVersion
     Properties:
