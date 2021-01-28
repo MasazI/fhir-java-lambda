@@ -15,16 +15,13 @@ public class ApiGatewayClient {
     
     private static String ENV_API_KEY = "ENV_API_KEY";
     
-    public HttpResponse<String> get(String endpoint, String token) throws Exception {
+    public HttpResponse<String> get(String host, String path, String token) throws Exception {
         try {
             logger.info(System.getenv(ENV_API_KEY));
             
-            HttpRequest req = HttpRequest.newBuilder(new URI(endpoint))
+            HttpRequest req = HttpRequest.newBuilder(new URI("https", host, path, null))
             .setHeader(
                 "x-api-key", System.getenv(ENV_API_KEY)
-            // ).setHeader(
-            //     "Content-Type", "application/json"
-            // )
             ).setHeader(
                 "Authorization", token
             ).GET().build();
@@ -43,20 +40,18 @@ public class ApiGatewayClient {
             
             return res;
         } catch (Exception e) {
+            e.printStackTrace();
             throw e;
         }
     }
     
-    public HttpResponse<String> post(String endpoint, String token, String payload) throws Exception {
+    public HttpResponse<String> post(String host, String path, String token, String payload) throws Exception {
         try {
-            logger.info(System.getenv(ENV_API_KEY));
-            
-            HttpRequest req = HttpRequest.newBuilder(new URI(endpoint))
+            HttpRequest req = HttpRequest.newBuilder(new URI("https", host, path, null))
             .setHeader(
                 "x-api-key", System.getenv(ENV_API_KEY)
-            // ).setHeader(
-            //     "Content-Type", "application/json"
-            // )
+            ).setHeader(
+                "Content-Type", "application/json"
             ).setHeader(
                 "Authorization", token
             ).POST(
@@ -77,6 +72,7 @@ public class ApiGatewayClient {
             
             return res;
         } catch (Exception e) {
+            e.printStackTrace();
             throw e;
         }
     }
