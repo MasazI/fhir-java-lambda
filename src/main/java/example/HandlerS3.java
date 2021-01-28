@@ -55,9 +55,10 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     
 =======
     Patient pat = new Patient();
-    
+    V2MessageConverter conv = new V2MessageConverter();
     //TODO put it into API Gateway (rest)
     String fhirPatient = gson.toJson(pat);
+    
 >>>>>>> issue2
     
     //TODO put it into s3 destination
