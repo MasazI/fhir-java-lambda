@@ -32,6 +32,8 @@ import example.pojo.observation.Observation;
 
 //TODO implementation for s3 event
 public class HandlerS3 implements RequestHandler<S3Event, String> {
+  private static String ENV_API_END_POINT = "ENV_API_END_POINT";
+  
   Gson gson = new GsonBuilder().setPrettyPrinting().create();
   
   //TODO put it into API Gateway (rest)
@@ -49,19 +51,35 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     String srcKey = record.getS3().getObject().getUrlDecodedKey();
     logger.info("Source key: " + srcKey);
     
-    //TODO get object and transform to new format
 <<<<<<< HEAD
+    // get token
+    String token = auth.sightIn();
+    
+    //TODO get object and transform to new format
+=======
+    //TODO get object and transform to new format
     auth.sightIn();
     
-=======
+>>>>>>> 2d2be1879851332823a11e5f20d53ffa2e955e3b
     Patient pat = new Patient();
+    String fhirPatient = gson.toJson(pat);
     
     //TODO put it into API Gateway (rest)
+<<<<<<< HEAD
+    ApiGatewayClient client = new ApiGatewayClient();
+    String baseurl = System.getenv(ENV_API_END_POINT);
+    String path = "/Patient";
+    try{
+      client.post(baseurl, path, token, fhirPatient);
+    }catch (Exception e) {
+            e.printStackTrace();
+    }
+=======
     String fhirPatient = gson.toJson(pat);
->>>>>>> issue2
+>>>>>>> 2d2be1879851332823a11e5f20d53ffa2e955e3b
     
     //TODO put it into s3 destination
-    
+
     return null;
   }
 }
