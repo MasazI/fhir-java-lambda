@@ -48,7 +48,10 @@ class InvokeTest {
     
     CognitoAuth auth = new CognitoAuth();
     
-    auth.sightIn();
+    String token = auth.sightIn();
+    String fhirPatient = gson.toJson(pat);
+    ApiGatewayClient client = ApiGatewayClient();
+    client.post("https://rq4p08uyxa.execute-api.us-west-2.amazonaws.com/dev/Patient", token, fhirPatient);
     
     // assertTrue(result.contains("Ok"));
     AWSXRay.endSegment();
