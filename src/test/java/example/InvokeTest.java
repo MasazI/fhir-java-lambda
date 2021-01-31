@@ -47,12 +47,32 @@ class InvokeTest {
     AWSXRay.beginSegment("fhir-java-lambda-test");
     
     CognitoAuth auth = new CognitoAuth();
+
+    Patient pat = null;
+    Observation[] obxs = null;
+    String srcBucket;
+    String srcKey;
+    
+    try{
+      AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.DEFAULT_REGION).build();
+      S3Object o = s3.getObject(srcBucket, srcKey);
+      S3ObjectInputStream s3is = o.getObjectContent();
+      V2MessageConverter conv = new V2MessageConverter((InputStream)s3is);
+
+      pat = conv.getPatient();
+      obxs = conv.getObservations();
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+      System.exit(1);
+    }
     
     String token = auth.sightIn();
     String fhirPatient = gson.toJson(pat);
     ApiGatewayClient client = ApiGatewayClient();
     client.post("https://rq4p08uyxa.execute-api.us-west-2.amazonaws.com/dev/Patient", token, fhirPatient);
-    
+    for(int i = 0: i<fhirObservations.i++){
+      client.post("https://rq4p08uyxa.execute-api.us-west-2.amazonaws.com/dev/Observation", token, fhirObservations[i]);
+    }
     // assertTrue(result.contains("Ok"));
     AWSXRay.endSegment();
   }

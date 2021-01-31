@@ -59,11 +59,7 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     String srcKey = record.getS3().getObject().getUrlDecodedKey();
     logger.info("Source key: " + srcKey);
     
-    // get token
-    String token = auth.sightIn();
-    
     //TODO get object and transform to new format
-
     Patient pat = null;
     Observation[] obxs = null;
     try{
@@ -74,19 +70,13 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
 
       pat = conv.getPatient();
       obxs = conv.getObservations();
-    // } catch (AmazonServiceException e) {
-    //   System.err.println(e.getErrorMessage());
-    //   System.exit(1);
-    // } catch (FileNotFoundException e) {
-    //   System.err.println(e.getMessage());
-    //   System.exit(1);
-    // } catch (IOException e) {
-    //   System.err.println(e.getMessage());
-    //   System.exit(1);
     } catch (Exception e) {
       System.err.println(e.getMessage());
       System.exit(1);
     }
+
+    // get token
+    String token = auth.sightIn();
     
     //TODO put it into API Gateway (rest)
     String fhirPatient = gson.toJson(pat);

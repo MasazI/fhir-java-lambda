@@ -28,6 +28,8 @@ import java.io.InputStream;
 import java.io.BufferedInputStream;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class V2MessageConverter{
   private Patient patient;
@@ -51,7 +53,7 @@ public class V2MessageConverter{
         CX patientID = pid.getPid3_PatientIdentifierList(1);
         XPN patientName = pid.getPid5_PatientName(1);
         TS dateTimeOfBirth = pid.getPid7_DateTimeOfBirth();
-        IS AdministrativeSex = pid.getPid8_AdministrativeSex();
+        IS administrativeSex = pid.getPid8_AdministrativeSex();
         System.out.println("patientName=" + patientName);
         
         //Patient ID
@@ -76,9 +78,28 @@ public class V2MessageConverter{
         patient.setName(patientNameList);
         
         //DOB
-        
+        Date dob = dateTimeOfBirth.getTime().getValueAsDate();
+        String strDob = new SimpleDateFormat("yyyyMMddhhmmss").format(dob);
+        patient.setBirthDate(strDob);
         
         //Sex
+        switch(administrativeSex.getValue()){
+          case "M":
+            patient.setGender("male");
+            break;
+          case "F":
+            patient.setGender("female");
+            break;
+          case "O":
+            patient.setGender("other");
+            break;
+          case "U":
+            patient.setGender("unknown");
+            break;
+          default:
+            patient.setGender("unknown");
+            break;            
+        }
         
         //Observation Loop
         List<Observation> observationList = new ArrayList<Observation>();
@@ -86,6 +107,10 @@ public class V2MessageConverter{
           Observation observation = new Observation();
           OBX obx = oulMsg.getSPECIMEN(i).getOBX();
           //OBX-2,3,5,6,12,14
+          
+          
+          
+          
           observationList.add(observation);
         }
         observations = observationList.toArray(new Observation[observationList.size()]);
