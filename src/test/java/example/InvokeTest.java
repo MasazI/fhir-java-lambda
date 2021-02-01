@@ -50,8 +50,16 @@ class InvokeTest {
   }
 
   @Test
+  void invokeTransformTest() throws IOException {
+        AWSXRay.beginSegment("fhir-java-lambda-s3-test");
+
+
+        AWSXRay.endSegment();
+  }
+
+  @Test
   void invokeAuthTest() throws IOException {
-    AWSXRay.beginSegment("fhir-java-lambda-test");
+    AWSXRay.beginSegment("fhir-java-lambda-auth-test");
     
     CognitoAuth auth = new CognitoAuth();
 
@@ -99,8 +107,14 @@ class InvokeTest {
       }
     }
 
-    // assertTrue(result.contains("Ok"));
     AWSXRay.endSegment();
+  }
+  
+    @Test
+  void invokePostTest() throws IOException {
+        AWSXRay.beginSegment("fhir-java-lambda-post-test");
+
+        AWSXRay.endSegment();
   }
 
 }
