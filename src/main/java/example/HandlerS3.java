@@ -12,7 +12,10 @@ import com.amazonaws.services.s3.event.S3EventNotification.S3EventNotificationRe
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.regions.Regions;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,9 +29,14 @@ import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.io.FileNotFoundException;
+//import java.io.IOException;
+import java.io.InputStream;
 
+import example.V2MessageConverter;
 import example.pojo.patient.Patient;
 import example.pojo.observation.Observation;
+
 
 //TODO implementation for s3 event
 public class HandlerS3 implements RequestHandler<S3Event, String> {
@@ -51,13 +59,32 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     String srcKey = record.getS3().getObject().getUrlDecodedKey();
     logger.info("Source key: " + srcKey);
     
+    //TODO get object and transform to new format
+    Patient pat = null;
+    Observation[] obxs = null;
+    try{
+      AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.DEFAULT_REGION).build();
+      S3Object o = s3.getObject(srcBucket, srcKey);
+      S3ObjectInputStream s3is = o.getObjectContent();
+      V2MessageConverter conv = new V2MessageConverter((InputStream)s3is);
+
+      pat = conv.getPatient();
+      obxs = conv.getObservations();
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+      System.exit(1);
+    }
+
     // get token
     String token = auth.sightIn();
     
-    //TODO get object and transform to new format
-    Patient pat = new Patient();
+    //TODO put it into API Gateway (rest)
     String fhirPatient = gson.toJson(pat);
-    
+    String[] fhirObservations = new String[obxs.length];
+    for(int i = 0; i < obxs.length; i++){
+      fhirObservations[i] = gson.toJson(obxs[i]);
+    }    
+
     //TODO put it into API Gateway (rest)
     ApiGatewayClient client = new ApiGatewayClient();
     String baseurl = System.getenv(ENV_API_END_POINT);
@@ -67,7 +94,7 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     }catch (Exception e) {
             e.printStackTrace();
     }
-    
+
     //TODO put it into s3 destination
 
     return null;
