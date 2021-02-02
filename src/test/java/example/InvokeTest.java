@@ -1,5 +1,8 @@
 package example;
 
+import example.pojo.patient.Patient;
+import example.pojo.observation.Observation;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -28,13 +31,20 @@ import java.lang.Long;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.FileInputStream;
 
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.AWSXRayRecorderBuilder;
 import com.amazonaws.xray.strategy.sampling.NoSamplingStrategy;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 class InvokeTest {
   private static final Logger logger = LoggerFactory.getLogger(InvokeTest.class);
+  private static String ENV_API_END_POINT = "ENV_API_END_POINT";
+  private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
   public InvokeTest() {
     AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard();
@@ -43,38 +53,84 @@ class InvokeTest {
   }
 
   @Test
-  void invokeTest() throws IOException {
-    AWSXRay.beginSegment("fhir-java-lambda-test");
-    
-    CognitoAuth auth = new CognitoAuth();
+  void invokeTransformTest() throws IOException {
+        AWSXRay.beginSegment("fhir-java-lambda-transform-test");
 
-    Patient pat = null;
-    Observation[] obxs = null;
-    String srcBucket;
-    String srcKey;
+        Patient pat = null;
+        Observation[] obxs = null;
+        
+        try{
+          InputStream is = new FileInputStream("test/test.txt");
+          V2MessageConverter conv = new V2MessageConverter(is);
     
-    try{
-      AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.DEFAULT_REGION).build();
-      S3Object o = s3.getObject(srcBucket, srcKey);
-      S3ObjectInputStream s3is = o.getObjectContent();
-      V2MessageConverter conv = new V2MessageConverter((InputStream)s3is);
-
-      pat = conv.getPatient();
-      obxs = conv.getObservations();
-    } catch (Exception e) {
-      System.err.println(e.getMessage());
-      System.exit(1);
-    }
+          pat = conv.getPatient();
+          String fhirPatient = gson.toJson(pat);
+          
+          System.out.println(fhirPatient);
+          
+          obxs = conv.getObservations();
+          for (Observation obx: obxs){
+            System.out.println(gson.toJson(obx));
+          }
+          
+        } catch (Exception e) {
+          System.err.println(e.getMessage());
+          System.exit(1);
+        }
     
-    String token = auth.sightIn();
-    String fhirPatient = gson.toJson(pat);
-    ApiGatewayClient client = ApiGatewayClient();
-    client.post("https://rq4p08uyxa.execute-api.us-west-2.amazonaws.com/dev/Patient", token, fhirPatient);
-    for(int i = 0: i<fhirObservations.i++){
-      client.post("https://rq4p08uyxa.execute-api.us-west-2.amazonaws.com/dev/Observation", token, fhirObservations[i]);
-    }
-    // assertTrue(result.contains("Ok"));
-    AWSXRay.endSegment();
+        AWSXRay.endSegment();
   }
 
+  @Test
+  void invokeAuthTest() throws IOException {
+    AWSXRay.beginSegment("fhir-java-lambda-auth-test");
+    
+    CognitoAuth auth = new CognitoAuth();
+    String token = auth.sightIn();
+    System.out.println("Access Token: " + token);
+    
+    AWSXRay.endSegment();
+  }
+  
+  @Test
+  void invokePostTest() throws IOException {
+        AWSXRay.beginSegment("fhir-java-lambda-post-test");
+        // api gateway client
+        ApiGatewayClient client = new ApiGatewayClient();
+        String baseurl = System.getenv(ENV_API_END_POINT);
+        
+        // get token
+        CognitoAuth auth = new CognitoAuth();
+        String token = auth.sightIn();
+        System.out.println("Access Token: " + token);
+    
+        // Transform data
+        Patient pat = null;
+        Observation[] obxs = null;
+        InputStream is = new FileInputStream("test/test.txt");
+        V2MessageConverter conv = new V2MessageConverter(is);
+  
+        // Post Patient Test
+        pat = conv.getPatient();
+        String path_patient = "/Patient";
+        String fhirPatient = gson.toJson(pat);
+        try{
+          client.post(baseurl, path_patient, token, fhirPatient);
+        }catch (Exception e) {
+          e.printStackTrace();
+        }
+        
+        // Post Observation Test  
+        obxs = conv.getObservations();
+        String path_observation = "/Observation";
+        for (Observation obx: obxs){
+          try{
+            client.post(baseurl, path_observation, token, gson.toJson(obx));
+          }catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+        
+        AWSXRay.endSegment();
+  }
 }
