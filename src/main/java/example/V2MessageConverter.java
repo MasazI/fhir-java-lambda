@@ -38,7 +38,7 @@ import java.text.SimpleDateFormat;
 import java.lang.Double;
 
 public class V2MessageConverter{
-  private Patient patient;
+  private Patient patient = new Patient();
   private Observation[] observations;
   
   public V2MessageConverter(InputStream is){
@@ -49,6 +49,7 @@ public class V2MessageConverter{
     while (iter.hasNext()){
       try{
         Message hapiMsg = iter.next();
+        
         OUL_R22 oulMsg = (OUL_R22)hapiMsg;
         MSH msh = oulMsg.getMSH();
         String msgType = msh.getMessageType().getMessageCode().getValue();
@@ -56,8 +57,9 @@ public class V2MessageConverter{
         System.out.println("msgType=" + msgType + "^" + msgEvent);
         
         PID pid = oulMsg.getPATIENT().getPID();
-        CX patientID = pid.getPid3_PatientIdentifierList(1);
-        XPN patientName = pid.getPid5_PatientName(1);
+        CX patientID = pid.getPid3_PatientIdentifierList(0);
+
+        XPN patientName = pid.getPid5_PatientName(0);
         TS dateTimeOfBirth = pid.getPid7_DateTimeOfBirth();
         IS administrativeSex = pid.getPid8_AdministrativeSex();
         System.out.println("patientName=" + patientName);
@@ -105,50 +107,49 @@ public class V2MessageConverter{
         //Observation Loop
         List<Observation> observationList = new ArrayList<Observation>();
         for (int i = 0; i < oulMsg.getSPECIMENReps(); i++){
-          Observation observation = new Observation();
-          OBX obx = oulMsg.getSPECIMEN(i).getOBX();
-          //OBX-2 skipped
-          
-          //OBX-3
-          Coding_ coding = new Coding_();
-          coding.setCode(obx.getObx3_ObservationIdentifier().getCe1_Identifier().getValue());
-          coding.setDisplay(obx.getObx3_ObservationIdentifier().getCe2_Text().getValue());
-          List codings = new ArrayList<Coding_>();
-          codings.add(coding);
-          Code code = new Code();
-          code.setCoding(codings);
-          observation.setCode(code);
-          //OBX-5 & OBX-6
-          ValueQuantity valueQuantity = new ValueQuantity();
-          Varies customValue = obx.getObx5_ObservationValue(1);
-          NM numericValue = (NM)customValue.getData();
-          Double value = new Double(numericValue.getValue());
-          valueQuantity.setValue(value);
-          valueQuantity.setUnit(obx.getObx6_Units().getCe2_Text().getValue());
-          observation.setValueQuantity(valueQuantity);
-          
-          //OBX-11
-          switch(obx.getObx11_ObservationResultStatus().getValue()){
-            case "F":
-            observation.setStatus("final");
-            break;
-          default:
-            observation.setStatus("unknown");
-            break;            
+          for (int j = 0; j < oulMsg.getSPECIMEN(i).getOBXReps(); j++){
+            Observation observation = new Observation();
+            OBX obx = oulMsg.getSPECIMEN(i).getOBX(j);
+            //OBX-2 skipped
+            
+            //OBX-3
+            Coding_ coding = new Coding_();
+            coding.setCode(obx.getObx3_ObservationIdentifier().getCe1_Identifier().getValue());
+            coding.setDisplay(obx.getObx3_ObservationIdentifier().getCe2_Text().getValue());
+            List codings = new ArrayList<Coding_>();
+            codings.add(coding);
+            Code code = new Code();
+            code.setCoding(codings);
+            observation.setCode(code);
+            //OBX-5 & OBX-6
+            ValueQuantity valueQuantity = new ValueQuantity();
+            Varies customValue = obx.getObx5_ObservationValue(0);
+
+            NM numericValue = (NM)customValue.getData();
+            Double value = new Double(numericValue.getValue());
+            valueQuantity.setValue(value);
+            valueQuantity.setUnit(obx.getObx6_Units().getCe2_Text().getValue());
+            observation.setValueQuantity(valueQuantity);
+            
+            //OBX-11
+            switch(obx.getObx11_ObservationResultStatus().getValue()){
+              case "F":
+              observation.setStatus("final");
+              break;
+            default:
+              observation.setStatus("unknown");
+              break;            
+            }
+            
+            //OBX-14
+            Date observationDate = obx.getObx14_DateTimeOfTheObservation().getTime().getValueAsDate();
+            String strObservationDate = new SimpleDateFormat("yyyyMMddhhmmss").format(observationDate);
+            observation.setEffectiveDateTime(strObservationDate);
+            
+            observationList.add(observation);
           }
-          
-          //OBX-14
-          Date observationDate = obx.getObx14_DateTimeOfTheObservation().getTime().getValueAsDate();
-          String strObservationDate = new SimpleDateFormat("yyyyMMddhhmmss").format(observationDate);
-          observation.setEffectiveDateTime(strObservationDate);
-          
-          observationList.add(observation);
         }
         observations = observationList.toArray(new Observation[observationList.size()]);
-
-      // }catch(EncodingNotSupportedException e){
-      //   e.printStackTrace();
-      //   return;
       }
       catch(Exception e){
         e.printStackTrace();
