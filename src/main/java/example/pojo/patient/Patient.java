@@ -9,7 +9,7 @@ public class Patient {
 
     @SerializedName("resourceType")
     @Expose
-    private String resourceType;
+    private String resourceType = "Patient";
     @SerializedName("meta")
     @Expose
     private Meta meta;

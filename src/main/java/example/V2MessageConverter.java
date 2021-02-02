@@ -82,8 +82,9 @@ public class V2MessageConverter{
         
         //DOB
         Date dob = dateTimeOfBirth.getTime().getValueAsDate();
-        String strDob = new SimpleDateFormat("yyyyMMddhhmmss").format(dob);
-        patient.setBirthDate(strDob);
+        String strDob_day = new SimpleDateFormat("yyyy-MM-dd").format(dob);
+        patient.setBirthDate(strDob_day);
+        
         
         //Sex
         switch(administrativeSex.getValue()){
@@ -143,8 +144,9 @@ public class V2MessageConverter{
             
             //OBX-14
             Date observationDate = obx.getObx14_DateTimeOfTheObservation().getTime().getValueAsDate();
-            String strObservationDate = new SimpleDateFormat("yyyyMMddhhmmss").format(observationDate);
-            observation.setEffectiveDateTime(strObservationDate);
+            String strObservationDate_day = new SimpleDateFormat("yyyy-MM-dd").format(observationDate);
+            String strObservationDate_sec = new SimpleDateFormat("hh:mm:ss.SSS").format(observationDate);
+            observation.setEffectiveDateTime(strObservationDate_day + "T" + strObservationDate_sec + "Z");
             
             observationList.add(observation);
           }
