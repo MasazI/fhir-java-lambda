@@ -9,7 +9,7 @@ public class Observation {
 
     @SerializedName("resourceType")
     @Expose
-    private String resourceType;
+    private String resourceType="Observation";
     @SerializedName("id")
     @Expose
     private String id;
