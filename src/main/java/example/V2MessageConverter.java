@@ -28,6 +28,7 @@ import example.pojo.observation.Observation;
 import example.pojo.observation.ValueQuantity;
 import example.pojo.observation.Code;
 import example.pojo.observation.Coding_;
+import example.pojo.observation.Subject;
 
 import java.io.InputStream;
 import java.io.BufferedInputStream;
@@ -159,6 +160,20 @@ public class V2MessageConverter{
       }
     }
       
+  }
+  
+  public boolean setSubject(String id){
+    try{
+      for(int i = 0; i < observations.length; i++){
+        Subject subject = new Subject();
+        subject.setReference(id);
+        observations[i].setSubject(subject);
+      }
+      return true;
+    }catch(Exception e){
+      e.printStackTrace();
+      return false;
+    }
   }
   
   public Patient getPatient(){
