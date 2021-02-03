@@ -32,13 +32,6 @@ public class CognitoAuth {
     private static String ENV_CLIENT_ID = "ENV_CLIENT_ID";
 
     public String sightIn() {
-        logger.info(System.getenv(ENV_USERNAME));
-        logger.info(System.getenv(ENV_PASSWORD));
-        logger.info(System.getenv(ENV_ACCESS_KEY));
-        logger.info(System.getenv(ENV_SECRET_KEY));
-        logger.info(System.getenv(ENV_USER_POOL));
-        logger.info(System.getenv(ENV_CLIENT_ID));
-        
         AWSCredentials credentials = new BasicAWSCredentials(System.getenv(ENV_ACCESS_KEY), System.getenv(ENV_SECRET_KEY));
         AWSCognitoIdentityProvider client = AWSCognitoIdentityProviderClientBuilder.standard()
         .withCredentials(new AWSStaticCredentialsProvider(credentials))
@@ -59,11 +52,6 @@ public class CognitoAuth {
         
         AdminInitiateAuthResult response = client.adminInitiateAuth(request);
         String accessToken = response.getAuthenticationResult().getAccessToken();
-        String idToken = response.getAuthenticationResult().getIdToken();
-        // System.out.println("Access Token: " + accessToken);
-        // System.out.println("Access IdToken: " + idToken);
-        // System.out.println("Access IdToken: " + response.getAuthenticationResult().getTokenType());
-
         return accessToken;
     }
 }

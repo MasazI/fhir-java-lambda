@@ -59,44 +59,53 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     String srcKey = record.getS3().getObject().getUrlDecodedKey();
     logger.info("Source key: " + srcKey);
     
-    //TODO get object and transform to new format
-    Patient pat = null;
-    Observation[] obxs = null;
-    try{
-      AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.DEFAULT_REGION).build();
-      S3Object o = s3.getObject(srcBucket, srcKey);
-      S3ObjectInputStream s3is = o.getObjectContent();
-      V2MessageConverter conv = new V2MessageConverter((InputStream)s3is);
-
-      pat = conv.getPatient();
-      obxs = conv.getObservations();
-    } catch (Exception e) {
-      System.err.println(e.getMessage());
-      System.exit(1);
-    }
-
-    // get token
-    String token = auth.sightIn();
-    
-    //TODO put it into API Gateway (rest)
-    String fhirPatient = gson.toJson(pat);
-    String[] fhirObservations = new String[obxs.length];
-    for(int i = 0; i < obxs.length; i++){
-      fhirObservations[i] = gson.toJson(obxs[i]);
-    }    
-
-    //TODO put it into API Gateway (rest)
+    //TODO put it into s3 destination
+     // api gateway client
     ApiGatewayClient client = new ApiGatewayClient();
     String baseurl = System.getenv(ENV_API_END_POINT);
-    String path = "/Patient";
+    
+    // get token
+    CognitoAuth auth = new CognitoAuth();
+    String token = auth.sightIn();
+    logger.info("Access Token: " + token);
+
+    // Transform data
+    Patient pat = null;
+    Observation[] obxs = null;
+    S3Client s3client = new S3Client();
+    S3Object originObject = null;
+    logger.info("getting object from S3");
     try{
-      client.post(baseurl, path, token, fhirPatient);
-    }catch (Exception e) {
-            e.printStackTrace();
+      originObject = s3client.get(srcBucket, srcKey);
+    }catch(Exception e){
+      e.printStackTrace();
     }
+    logger.info("transforming object");
+    V2MessageConverter conv = new V2MessageConverter((InputStream)originObject.getObjectContent());
 
-    //TODO put it into s3 destination
-
+    // Post Patient Test
+    pat = conv.getPatient();
+    String path_patient = "/Patient";
+    String fhirPatient = gson.toJson(pat);
+    logger.info("put Patient object");
+    try{
+      client.post(baseurl, path_patient, token, fhirPatient);
+    }catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    // Post Observation Test  
+    obxs = conv.getObservations();
+    String path_observation = "/Observation";
+    logger.info("put Observation object");
+    try{
+      for (Observation obx: obxs){
+        client.post(baseurl, path_observation, token, gson.toJson(obx));
+      }
+    }catch (Exception e) {
+        e.printStackTrace();
+    }
+    
     return null;
   }
 }
