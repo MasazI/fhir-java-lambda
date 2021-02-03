@@ -29,7 +29,7 @@ public class ApiGatewayClient {
             HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
-            .connectTimeout(Duration.ofSeconds(10))
+            .connectTimeout(Duration.ofSeconds(30))
             .build();
             
             HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
@@ -61,7 +61,7 @@ public class ApiGatewayClient {
             HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
-            .connectTimeout(Duration.ofSeconds(10))
+            .connectTimeout(Duration.ofSeconds(30))
             .build();
             
             HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
