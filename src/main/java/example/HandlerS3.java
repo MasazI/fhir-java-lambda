@@ -94,6 +94,9 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
       e.printStackTrace();
     }
     
+    // Set Subject for Observation
+    conv.setSubject("AAA");
+    
     // Post Observation Test  
     obxs = conv.getObservations();
     String path_observation = "/Observation";
