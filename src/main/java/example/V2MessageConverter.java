@@ -164,9 +164,9 @@ public class V2MessageConverter{
   
   public boolean setSubject(String id){
     try{
+      Subject subject = new Subject();
+      subject.setReference(id);
       for(int i = 0; i < observations.length; i++){
-        Subject subject = new Subject();
-        subject.setReference(id);
         observations[i].setSubject(subject);
       }
       return true;
