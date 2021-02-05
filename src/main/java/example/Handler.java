@@ -16,6 +16,9 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.AWSXRayRecorderBuilder;
+import com.amazonaws.xray.strategy.sampling.NoSamplingStrategy;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,6 +44,7 @@ import example.pojo.patient.Patient;
 import example.pojo.observation.Observation;
 
 
+
 //TODO implementation for s3 event
 public class Handler implements RequestHandler<S3Event, String> {
   private static String ENV_API_END_POINT = "ENV_API_END_POINT";
@@ -49,10 +53,17 @@ public class Handler implements RequestHandler<S3Event, String> {
   
   //TODO put it into API Gateway (rest)
   CognitoClient auth = new CognitoClient();
-  
+
+  // X-ray  
+  AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard();
+
   private static final Logger logger = LoggerFactory.getLogger(Handler.class);
   @Override
   public String handleRequest(S3Event s3event, Context context) {
+    builder.withSamplingStrategy(new NoSamplingStrategy());
+    AWSXRay.setGlobalRecorder(builder.build());
+    AWSXRay.beginSegment("fhir-java-lambda-get-origin");
+
     logger.info("EVENT: " + gson.toJson(s3event));
     S3EventNotificationRecord record = s3event.getRecords().get(0);
     
@@ -61,9 +72,10 @@ public class Handler implements RequestHandler<S3Event, String> {
     // Object key may have spaces or unicode non-ASCII characters.
     String srcKey = record.getS3().getObject().getUrlDecodedKey();
     logger.info("Source key: " + srcKey);
+    AWSXRay.endSegment();
     
-    //TODO put it into s3 destination
-     // api gateway client
+    // api gateway client
+    AWSXRay.beginSegment("fhir-java-lambda-get-token");
     ApiGatewayClient client = new ApiGatewayClient();
     String baseurl = System.getenv(ENV_API_END_POINT);
     
@@ -71,8 +83,10 @@ public class Handler implements RequestHandler<S3Event, String> {
     CognitoClient auth = new CognitoClient();
     String token = auth.sightIn();
     logger.info("Access Token: " + token);
+    AWSXRay.endSegment();
 
     // Transform data
+    AWSXRay.beginSegment("fhir-java-lambda-transform-data");
     Patient pat = null;
     Observation[] obxs = null;
     S3Client s3client = new S3Client();
@@ -85,8 +99,10 @@ public class Handler implements RequestHandler<S3Event, String> {
     }
     logger.info("transforming object");
     V2MessageConverter conv = new V2MessageConverter((InputStream)originObject.getObjectContent());
+    AWSXRay.endSegment();
 
     // Post Patient Test
+    AWSXRay.beginSegment("fhir-java-lambda-post-fhir-on-aws");
     pat = conv.getPatient();
     String path_patient = "/Patient";
     String fhirPatient = gson.toJson(pat);
@@ -125,8 +141,10 @@ public class Handler implements RequestHandler<S3Event, String> {
         e.printStackTrace();
       }
     }
+    AWSXRay.endSegment();
     
     // output to S3
+    AWSXRay.beginSegment("fhir-java-lambda-put-to-s3");
     String patient_output_key = "Patient/"+patient_id;
     logger.info("put json to S3");
     System.out.println(patient_output_key);
@@ -137,7 +155,8 @@ public class Handler implements RequestHandler<S3Event, String> {
       System.out.println(observation_key);
       s3client.put(srcBucket, "Observation/"+observation_key+".json", observation_body);
     }
-    
+    AWSXRay.endSegment();
+
     return null;
   }
 }
