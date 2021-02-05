@@ -9,7 +9,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: build/distributions/fhir-java-lambda.zip
-      Handler: example.HandlerS3
+      Handler: example.Handler
       Runtime: java11
       Description: Java function
       MemorySize: 512

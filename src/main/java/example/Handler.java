@@ -42,15 +42,15 @@ import example.pojo.observation.Observation;
 
 
 //TODO implementation for s3 event
-public class HandlerS3 implements RequestHandler<S3Event, String> {
+public class Handler implements RequestHandler<S3Event, String> {
   private static String ENV_API_END_POINT = "ENV_API_END_POINT";
   
   Gson gson = new GsonBuilder().setPrettyPrinting().create();
   
   //TODO put it into API Gateway (rest)
-  CognitoAuth auth = new CognitoAuth();
+  CognitoClient auth = new CognitoClient();
   
-  private static final Logger logger = LoggerFactory.getLogger(HandlerS3.class);
+  private static final Logger logger = LoggerFactory.getLogger(Handler.class);
   @Override
   public String handleRequest(S3Event s3event, Context context) {
     logger.info("EVENT: " + gson.toJson(s3event));
@@ -68,7 +68,7 @@ public class HandlerS3 implements RequestHandler<S3Event, String> {
     String baseurl = System.getenv(ENV_API_END_POINT);
     
     // get token
-    CognitoAuth auth = new CognitoAuth();
+    CognitoClient auth = new CognitoClient();
     String token = auth.sightIn();
     logger.info("Access Token: " + token);
 
