@@ -21,8 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 
-public class CognitoAuth {
-    private static final Logger logger = LoggerFactory.getLogger(CognitoAuth.class);
+public class CognitoClient {
+    private static final Logger logger = LoggerFactory.getLogger(CognitoClient.class);
     
     private static String ENV_USERNAME = "ENV_USERNAME";
     private static String ENV_PASSWORD = "ENV_PASSWORD";
