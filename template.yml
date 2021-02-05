@@ -13,7 +13,7 @@ Resources:
       Runtime: java11
       Description: Java function
       MemorySize: 512
-      Timeout: 10
+      Timeout: 60
       # Function's execution role
       Policies:
         - AWSLambdaBasicExecutionRole
@@ -43,6 +43,8 @@ Resources:
           ENV_SECRET_KEY: ""
           ENV_USER_POOL: ""
           ENV_CLIENT_ID: ""
+          ENV_API_KEY: ""
+          ENV_API_END_POINT: ""
   libs:
     Type: AWS::Serverless::LayerVersion
     Properties:
