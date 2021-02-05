@@ -90,7 +90,7 @@ class InvokeTest {
   void invokeAuthTest() throws IOException {
     AWSXRay.beginSegment("fhir-java-lambda-auth-test");
     
-    CognitoAuth auth = new CognitoAuth();
+    CognitoClient auth = new CognitoClient();
     String token = auth.sightIn();
     System.out.println("Access Token: " + token);
     
@@ -105,7 +105,7 @@ class InvokeTest {
         String baseurl = System.getenv(ENV_API_END_POINT);
         
         // get token
-        CognitoAuth auth = new CognitoAuth();
+        CognitoClient auth = new CognitoClient();
         String token = auth.sightIn();
         System.out.println("Access Token: " + token);
     
