@@ -25,6 +25,7 @@ public class S3Client {
     
     public void put(String bucketName, String stringObjKeyName, String payload){
         try{
+            logger.info("Putting an object: " + stringObjKeyName);
             s3Client.putObject(bucketName, stringObjKeyName, payload);
         } catch (AmazonServiceException e) {
             e.printStackTrace();
@@ -36,7 +37,7 @@ public class S3Client {
     public S3Object get(String bucketName, String key) throws IOException{
         S3Object fullObject = null;
         try {
-            logger.info("Downloading an object");
+            logger.info("Downloading an object:" + key);
             fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));
         } catch (AmazonServiceException e) {
             e.printStackTrace();

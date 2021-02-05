@@ -30,14 +30,14 @@ public class CognitoClient {
     private static String ENV_SECRET_KEY = "ENV_SECRET_KEY";
     private static String ENV_USER_POOL = "ENV_USER_POOL";
     private static String ENV_CLIENT_ID = "ENV_CLIENT_ID";
-
-    public String sightIn() {
-        AWSCredentials credentials = new BasicAWSCredentials(System.getenv(ENV_ACCESS_KEY), System.getenv(ENV_SECRET_KEY));
-        AWSCognitoIdentityProvider client = AWSCognitoIdentityProviderClientBuilder.standard()
+    
+    private AWSCredentials credentials = new BasicAWSCredentials(System.getenv(ENV_ACCESS_KEY), System.getenv(ENV_SECRET_KEY));
+    private AWSCognitoIdentityProvider client = AWSCognitoIdentityProviderClientBuilder.standard()
         .withCredentials(new AWSStaticCredentialsProvider(credentials))
         .withRegion(Regions.US_WEST_2)
         .build();
-        
+
+    public String sightIn() {
         Map<String, String> authParameters = new HashMap<>();
         authParameters.put("USERNAME", System.getenv(ENV_USERNAME));
         authParameters.put("PASSWORD", System.getenv(ENV_PASSWORD));

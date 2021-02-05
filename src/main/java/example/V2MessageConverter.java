@@ -46,8 +46,6 @@ public class V2MessageConverter{
   
   public V2MessageConverter(InputStream is){
     is = new BufferedInputStream(is);
-//    HapiContext context = new DefaultHapiContext();
-//    Parser p = context.getGenericParser();
     Hl7InputStreamMessageIterator iter = new Hl7InputStreamMessageIterator(is);
     while (iter.hasNext()){
       try{

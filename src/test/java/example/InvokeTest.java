@@ -3,8 +3,8 @@ package example;
 import example.pojo.patient.Patient;
 import example.pojo.observation.Observation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -70,18 +70,17 @@ class InvokeTest {
     
           pat = conv.getPatient();
           String fhirPatient = gson.toJson(pat);
-          
           System.out.println(fhirPatient);
-          
           obxs = conv.getObservations();
           for (Observation obx: obxs){
             System.out.println(gson.toJson(obx));
           }
           
         } catch (Exception e) {
-          System.err.println(e.getMessage());
-          System.exit(1);
+          fail(e.getMessage());
         }
+        assertNotNull(pat);
+        assertNotNull(obxs);
     
         AWSXRay.endSegment();
   }
@@ -92,6 +91,7 @@ class InvokeTest {
     
     CognitoClient auth = new CognitoClient();
     String token = auth.sightIn();
+    assertNotNull(token);
     System.out.println("Access Token: " + token);
     
     AWSXRay.endSegment();
@@ -107,6 +107,7 @@ class InvokeTest {
         // get token
         CognitoClient auth = new CognitoClient();
         String token = auth.sightIn();
+        assertNotNull(token);
         System.out.println("Access Token: " + token);
     
         // Transform data
@@ -115,7 +116,7 @@ class InvokeTest {
         InputStream is = new FileInputStream("test/test.txt");
         V2MessageConverter conv = new V2MessageConverter(is);
   
-        // Post Patient Test
+        // Patient Test
         pat = conv.getPatient();
         String path_patient = "/Patient";
         String fhirPatient = gson.toJson(pat);
@@ -130,11 +131,13 @@ class InvokeTest {
           System.out.println("Patient id: " + map.get("id").toString());
           patient_id = map.get("id").toString();
         }catch (Exception e) {
-          e.printStackTrace();
+          fail(e.getMessage());
         }
+        assertNotNull(patient_id);
+        assertNotNull(output_patient);
         conv.setSubject(patient_id);
         
-        // Post Observation Test  
+        //Observation Test  
         obxs = conv.getObservations();
         String path_observation = "/Observation";
         List<SimpleEntry<String, String>> observation_list = new ArrayList<>();
@@ -146,8 +149,9 @@ class InvokeTest {
             map = (Map<String, Object>)gson.fromJson(body, map.getClass());
             System.out.println("Observation id: " + map.get("id").toString());
             observation_list.add(new SimpleEntry<>(map.get("id").toString(), body));
+            assertNotNull(body);
           }catch (Exception e) {
-            e.printStackTrace();
+            fail(e.getMessage());
           }
         }
         

@@ -23,8 +23,6 @@ import com.amazonaws.xray.strategy.sampling.NoSamplingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-//import 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,20 +41,15 @@ import example.V2MessageConverter;
 import example.pojo.patient.Patient;
 import example.pojo.observation.Observation;
 
-
-
-//TODO implementation for s3 event
 public class Handler implements RequestHandler<S3Event, String> {
   private static String ENV_API_END_POINT = "ENV_API_END_POINT";
   
   Gson gson = new GsonBuilder().setPrettyPrinting().create();
-  
-  //TODO put it into API Gateway (rest)
-  CognitoClient auth = new CognitoClient();
+    CognitoClient auth = new CognitoClient();
 
-  // X-ray  
+  // For X-ray custome segment
   AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard();
-
+  
   private static final Logger logger = LoggerFactory.getLogger(Handler.class);
   @Override
   public String handleRequest(S3Event s3event, Context context) {

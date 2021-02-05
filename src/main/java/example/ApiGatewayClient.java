@@ -15,6 +15,12 @@ public class ApiGatewayClient {
     
     private static String ENV_API_KEY = "ENV_API_KEY";
     
+    private HttpClient client = HttpClient.newBuilder()
+        .version(HttpClient.Version.HTTP_1_1)
+        .followRedirects(HttpClient.Redirect.NORMAL)
+        .connectTimeout(Duration.ofSeconds(30))
+        .build();
+
     public HttpResponse<String> get(String host, String path, String token) throws Exception {
         try {
             logger.info(System.getenv(ENV_API_KEY));
@@ -26,11 +32,7 @@ public class ApiGatewayClient {
                 "Authorization", token
             ).GET().build();
             
-            HttpClient client = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .followRedirects(HttpClient.Redirect.NORMAL)
-            .connectTimeout(Duration.ofSeconds(30))
-            .build();
+
             
             HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
             int statusCode = res.statusCode();
@@ -57,12 +59,6 @@ public class ApiGatewayClient {
             ).POST(
                 HttpRequest.BodyPublishers.ofString(payload)    
             ).build();
-            
-            HttpClient client = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .followRedirects(HttpClient.Redirect.NORMAL)
-            .connectTimeout(Duration.ofSeconds(30))
-            .build();
             
             HttpResponse<String> res = client.send(req, HttpResponse.BodyHandlers.ofString());
             int statusCode = res.statusCode();
