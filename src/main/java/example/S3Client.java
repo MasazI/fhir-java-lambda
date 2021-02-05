@@ -21,15 +21,21 @@ import org.slf4j.LoggerFactory;
 public class S3Client {
     private static final Logger logger = LoggerFactory.getLogger(S3Client.class);
     private Regions clientRegion = Regions.DEFAULT_REGION;
+    private AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
     
-    public void put(){
-        //TODO put the json to S3 destination.
+    public void put(String bucketName, String stringObjKeyName, String payload){
+        try{
+            s3Client.putObject(bucketName, stringObjKeyName, payload);
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     public S3Object get(String bucketName, String key) throws IOException{
         S3Object fullObject = null;
         try {
-            AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
             logger.info("Downloading an object");
             fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));
         } catch (AmazonServiceException e) {
