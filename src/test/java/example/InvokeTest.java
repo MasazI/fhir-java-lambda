@@ -27,12 +27,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 import java.lang.Long;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
+import java.net.http.HttpResponse;
 
 import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.AWSXRayRecorderBuilder;
@@ -114,18 +119,33 @@ class InvokeTest {
         pat = conv.getPatient();
         String path_patient = "/Patient";
         String fhirPatient = gson.toJson(pat);
+        String patient_id = null;
+        String output_patient = null;
         try{
-          client.post(baseurl, path_patient, token, fhirPatient);
+          HttpResponse<String> res = client.post(baseurl, path_patient, token, fhirPatient);
+          output_patient = res.body();
+          Gson gson = new Gson();
+          Map<String, Object> map = new HashMap<String, Object>();
+          map = (Map<String, Object>)gson.fromJson(output_patient, map.getClass());
+          System.out.println("Patient id: " + map.get("id").toString());
+          patient_id = map.get("id").toString();
         }catch (Exception e) {
           e.printStackTrace();
         }
+        conv.setSubject(patient_id);
         
         // Post Observation Test  
         obxs = conv.getObservations();
         String path_observation = "/Observation";
+        List<SimpleEntry<String, String>> observation_list = new ArrayList<>();
         for (Observation obx: obxs){
           try{
-            client.post(baseurl, path_observation, token, gson.toJson(obx));
+            HttpResponse<String> res = client.post(baseurl, path_observation, token, gson.toJson(obx));
+            String body = res.body();
+            Map<String, Object> map = new HashMap<String, Object>();
+            map = (Map<String, Object>)gson.fromJson(body, map.getClass());
+            System.out.println("Observation id: " + map.get("id").toString());
+            observation_list.add(new SimpleEntry<>(map.get("id").toString(), body));
           }catch (Exception e) {
             e.printStackTrace();
           }

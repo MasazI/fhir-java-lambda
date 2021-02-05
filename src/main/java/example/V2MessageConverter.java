@@ -42,6 +42,8 @@ public class V2MessageConverter{
   private Patient patient = new Patient();
   private Observation[] observations;
   
+  private static String reference_header = "Patient/";
+  
   public V2MessageConverter(InputStream is){
     is = new BufferedInputStream(is);
 //    HapiContext context = new DefaultHapiContext();
@@ -166,7 +168,7 @@ public class V2MessageConverter{
     try{
       for(int i = 0; i < observations.length; i++){
         Subject subject = new Subject();
-        subject.setReference(id);
+        subject.setReference(reference_header+id);
         observations[i].setSubject(subject);
       }
       return true;
