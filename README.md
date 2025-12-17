@@ -30,7 +30,7 @@ Use the following instructions to deploy the sample application.
 
 # Requirements
 - [Java 17 runtime environment (SE JRE)](https://www.oracle.com/java/technologies/javase-downloads.html)
-- [Gradle 5](https://gradle.org/releases/)
+- [Gradle 7.3+](https://gradle.org/releases/)
 - The Bash shell. For Cloud9, Linux and macOS, this is included by default.
 - [HAPI HL7v2](https://hapifhir.github.io/hapi-hl7v2/getting_started.html)
 - [The AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) v1.17 or newer.
