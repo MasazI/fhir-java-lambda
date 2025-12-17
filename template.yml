@@ -10,7 +10,7 @@ Resources:
     Properties:
       CodeUri: build/distributions/fhir-java-lambda.zip
       Handler: example.Handler
-      Runtime: java11
+      Runtime: java17
       Description: Java function
       MemorySize: 512
       Timeout: 60
@@ -52,4 +52,4 @@ Resources:
       Description: Dependencies for the fhir-java-lambda sample app.
       ContentUri: build/fhir-java-lambda-lib.zip
       CompatibleRuntimes:
-        - java11
+        - java17

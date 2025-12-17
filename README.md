@@ -29,7 +29,7 @@ The project source includes function code and supporting resources:
 Use the following instructions to deploy the sample application.
 
 # Requirements
-- [Java 11 runtime environment (SE JRE)](https://www.oracle.com/java/technologies/javase-downloads.html)
+- [Java 17 runtime environment (SE JRE)](https://www.oracle.com/java/technologies/javase-downloads.html)
 - [Gradle 5](https://gradle.org/releases/)
 - The Bash shell. For Cloud9, Linux and macOS, this is included by default.
 - [HAPI HL7v2](https://hapifhir.github.io/hapi-hl7v2/getting_started.html)
