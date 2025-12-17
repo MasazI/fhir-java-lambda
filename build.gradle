@@ -7,6 +7,7 @@ repositories {
 }
 
 dependencies {
+    // AWS SDK BOM - updated to 2.20.0+ for Java 17 support (already compliant)
     implementation platform('software.amazon.awssdk:bom:2.20.0')
     implementation platform('com.amazonaws:aws-xray-recorder-sdk-bom:2.4.0')
     implementation 'software.amazon.awssdk:lambda'
@@ -14,20 +15,34 @@ dependencies {
     implementation 'com.amazonaws:aws-xray-recorder-sdk-aws-sdk-core'
     implementation 'com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2'
     implementation 'com.amazonaws:aws-xray-recorder-sdk-aws-sdk-v2-instrumentor'
-    implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
-    implementation 'com.amazonaws:aws-lambda-java-events:2.2.9'
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.578'
-    implementation 'com.amazonaws:aws-java-sdk-cognitoidp:1.11.939'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.apache.logging.log4j:log4j-api:2.17.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.17.1'
+    
+    // AWS Lambda Java libraries - updated for Java 17 compatibility
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
+    implementation 'com.amazonaws:aws-lambda-java-events:3.14.0'
+    
+    // AWS SDK v1 dependencies (retained for HAPI library compatibility)
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.529'
+    implementation 'com.amazonaws:aws-java-sdk-cognitoidp:1.12.529'
+    
+    // Gson - updated to latest stable version for Java 17
+    implementation 'com.google.code.gson:gson:2.11.0'
+    
+    // Log4j - updated to address CVE-2021-44228 (Log4Shell) and ensure Java 17 compatibility
+    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    
+    // HAPI HL7 libraries
     implementation 'ca.uhn.hapi:hapi-base:2.2'
     implementation 'ca.uhn.hapi:hapi-structures-v21:2.2'
     implementation 'ca.uhn.hapi:hapi-structures-v251:2.2'
-    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j18-impl:2.17.1'
-    runtimeOnly 'com.amazonaws:aws-lambda-java-log4j2:1.2.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
+    
+    // Logging implementations
+    runtimeOnly 'org.apache.logging.log4j:log4j-slf4j18-impl:2.23.1'
+    runtimeOnly 'com.amazonaws:aws-lambda-java-log4j2:1.6.0'
+    
+    // JUnit 5 - updated for Java 17 compatibility
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 test {
